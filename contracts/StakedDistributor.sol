@@ -1,10 +1,10 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
-import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import './libraries/SafeToken.sol';
-import './Distributor.sol';
+import "./libraries/SafeToken.sol";
+import "./Distributor.sol";
 
 contract StakedDistributor is Distributor, ERC20 {
     using SafeToken for address;
@@ -20,7 +20,11 @@ contract StakedDistributor is Distributor, ERC20 {
 
     address public immutable mare;
 
-    constructor(address mare_, string memory name, string memory symbol) ERC20(name, symbol) {
+    constructor(
+        address mare_,
+        string memory name,
+        string memory symbol
+    ) ERC20(name, symbol) {
         mare = mare_;
     }
 
@@ -41,14 +45,21 @@ contract StakedDistributor is Distributor, ERC20 {
 
     function withdraw() public {
         Withdrawal storage withdrawal_ = withdrawal[msg.sender];
-        require(block.timestamp >= withdrawal_.releaseTime, 'StakedDistributor: not released');
+        require(
+            block.timestamp >= withdrawal_.releaseTime,
+            "StakedDistributor: not released"
+        );
         uint256 amount = withdrawal_.amount;
         withdrawal_.amount = 0;
         mare.safeTransfer(msg.sender, amount);
         emit Withdraw(msg.sender, amount);
     }
 
-    function _afterTokenTransfer(address from, address to, uint256 /* amount */) internal override {
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 /* amount */
+    ) internal override {
         if (from != address(0)) {
             _editRecipientInternal(from, balanceOf(from));
         }
@@ -59,7 +70,9 @@ contract StakedDistributor is Distributor, ERC20 {
     }
 
     /* Admin functions */
-    function setWithdrawalPendingTime(uint256 withdrawalPendingTime_) public onlyOwner {
+    function setWithdrawalPendingTime(
+        uint256 withdrawalPendingTime_
+    ) public onlyOwner {
         withdrawalPendingTime = withdrawalPendingTime_;
     }
 }

@@ -1,28 +1,28 @@
-import * as dotenv from 'dotenv';
-dotenv.config()
+import * as dotenv from "dotenv";
+dotenv.config();
 
-import { HardhatUserConfig } from 'hardhat/config';
-import '@nomicfoundation/hardhat-network-helpers';
-import '@nomiclabs/hardhat-waffle';
-import '@typechain/hardhat';
-import 'hardhat-deploy';
-import 'hardhat-deploy-ethers';
-import '@openzeppelin/hardhat-upgrades';
-import 'solidity-coverage';
+import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-network-helpers";
+import "@nomiclabs/hardhat-waffle";
+import "@typechain/hardhat";
+import "hardhat-deploy";
+import "hardhat-deploy-ethers";
+import "@openzeppelin/hardhat-upgrades";
+import "solidity-coverage";
 
 const config: HardhatUserConfig = {
     solidity: {
         compilers: [
             {
-                version: '0.8.10',
+                version: "0.8.10",
                 settings: {
                     optimizer: {
                         enabled: true,
                         runs: 200,
-                    }
-                }
-            }
-        ]
+                    },
+                },
+            },
+        ],
     },
     networks: {
         hardhat: {
