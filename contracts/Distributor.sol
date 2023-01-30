@@ -1,11 +1,11 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/utils/math/SafeMath.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-import './libraries/SafeToken.sol';
+import "./libraries/SafeToken.sol";
 
 abstract contract Distributor is Ownable {
     using SafeMath for uint256;
@@ -27,9 +27,22 @@ abstract contract Distributor is Ownable {
     // token => totalShares
     uint256 public totalShares;
 
-    event AddReward(address indexed token, uint256 amount, uint256 newShareIndex);
-    event UpdateCredit(address indexed token, address indexed account, uint256 lastShareIndex, uint256 credit);
-    event EditRecipient(address indexed account, uint256 shares, uint256 totalShares);
+    event AddReward(
+        address indexed token,
+        uint256 amount,
+        uint256 newShareIndex
+    );
+    event UpdateCredit(
+        address indexed token,
+        address indexed account,
+        uint256 lastShareIndex,
+        uint256 credit
+    );
+    event EditRecipient(
+        address indexed account,
+        uint256 shares,
+        uint256 totalShares
+    );
     event Claim(address indexed token, address indexed account, uint256 amount);
 
     // Valid reward tokens
@@ -40,21 +53,29 @@ abstract contract Distributor is Ownable {
         tokens.push(address(0));
     }
 
-    function addReward(address token, uint256 amount) public returns (uint256 _shareIndex) {
-        require(tokenIndexes[token] > 0, 'Distributor: Invalid token');
-        require(amount > 0, 'Distributor: Invalid amount');
+    function addReward(
+        address token,
+        uint256 amount
+    ) public returns (uint256 _shareIndex) {
+        require(tokenIndexes[token] > 0, "Distributor: Invalid token");
+        require(amount > 0, "Distributor: Invalid amount");
 
         if (totalShares == 0) return shareIndex[token];
 
-        _shareIndex = amount.mul(2**160).div(totalShares).add(shareIndex[token]);
+        _shareIndex = amount.mul(2 ** 160).div(totalShares).add(
+            shareIndex[token]
+        );
         shareIndex[token] = _shareIndex;
 
         token.safeTransferFrom(msg.sender, address(this), amount);
         emit AddReward(token, amount, shareIndex[token]);
     }
 
-    function updateCredit(address token, address account) public returns (uint256 credit) {
-        require(tokenIndexes[token] > 0, 'Distributor: Invalid token');
+    function updateCredit(
+        address token,
+        address account
+    ) public returns (uint256 credit) {
+        require(tokenIndexes[token] > 0, "Distributor: Invalid token");
 
         uint256 _shareIndex = shareIndex[token];
         if (_shareIndex == 0) return 0;
@@ -64,7 +85,10 @@ abstract contract Distributor is Ownable {
         uint256 lastCredit = recipient.credit;
         uint256 _shares = shares[account];
 
-        credit = lastCredit + _shareIndex.sub(lastShareIndex).mul(_shares) / 2**160;
+        credit =
+            lastCredit +
+            _shareIndex.sub(lastShareIndex).mul(_shares) /
+            2 ** 160;
         recipient.lastShareIndex = _shareIndex;
         recipient.credit = credit;
 
@@ -82,7 +106,10 @@ abstract contract Distributor is Ownable {
         }
     }
 
-    function getClaimable(address token, address account) external view returns (uint256 amount) {
+    function getClaimable(
+        address token,
+        address account
+    ) external view returns (uint256 amount) {
         uint256 _shareIndex = shareIndex[token];
         if (_shareIndex == 0) return 0;
 
@@ -91,11 +118,17 @@ abstract contract Distributor is Ownable {
         uint256 lastCredit = recipient.credit;
         uint256 _shares = shares[account];
 
-        amount = lastCredit + _shareIndex.sub(lastShareIndex).mul(_shares) / 2**160;
+        amount =
+            lastCredit +
+            _shareIndex.sub(lastShareIndex).mul(_shares) /
+            2 ** 160;
     }
 
-    function claimInternal(address token, address account) internal returns (uint256 amount) {
-        require(tokenIndexes[token] > 0, 'Distributor: Invalid token');
+    function claimInternal(
+        address token,
+        address account
+    ) internal returns (uint256 amount) {
+        require(tokenIndexes[token] > 0, "Distributor: Invalid token");
 
         amount = updateCredit(token, account);
         if (amount > 0) {
@@ -125,14 +158,14 @@ abstract contract Distributor is Ownable {
 
     /* Admin functions */
     function addToken(address token) external onlyOwner {
-        require(tokenIndexes[token] == 0, 'Distributor: token already added');
+        require(tokenIndexes[token] == 0, "Distributor: token already added");
         tokens.push(token);
         tokenIndexes[token] = tokens.length - 1;
     }
 
     function removeToken(address token) external onlyOwner {
         uint256 index = tokenIndexes[token];
-        require(index > 0, 'Distributor: token not found');
+        require(index > 0, "Distributor: token not found");
         uint256 lastIndex = tokens.length - 1;
         if (index < lastIndex) {
             address lastToken = tokens[lastIndex];
