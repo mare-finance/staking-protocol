@@ -1,8 +1,8 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 
-const mareAddress = "0x1db2466d9f5e10d7090e7152b68d62703a2245f0";
-const veloAddress = "0x3c8b650257cfb5f272f799f5e2b4e65093a11a05";
+const mareAddress = "0xd86C8d4279CCaFbec840c782BcC50D201f277419";
+const veloAddress = "0xE1da44C0dA55B075aE8E2e4b6986AdC76Ac77d73";
 
 const func: DeployFunction = async ({
     getNamedAccounts,
