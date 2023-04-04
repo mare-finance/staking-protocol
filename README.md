@@ -1,3 +1,3 @@
 
-# Mare Finance - Lending Protocol
-A Compound Fork.
+# Mare Finance - Staking Protocol
+Mare token utilization.
