@@ -28,13 +28,13 @@ const config: HardhatUserConfig = {
         hardhat: {
             chainId: 2222,
             forking: {
-                url: "https://evm.kava.io",
-                blockNumber: 3799680,
+                url: process.env.RPC_KAVA!,
+                blockNumber: 4172700,
             },
         },
         kava: {
             chainId: 2222,
-            url: "https://evm.kava.io",
+            url: process.env.RPC_KAVA!,
             accounts: [process.env.DEPLOYER_KAVA!],
             verify: {
                 etherscan: {
