@@ -13,6 +13,11 @@ const func: DeployFunction = async ({
 }: HardhatRuntimeEnvironment) => {
     const { deployer } = await getNamedAccounts();
 
+    if (await ethers.getContractOrNull("uMare")) {
+        console.log("uMare already deployed");
+        return;
+    }
+
     const stakeDeploy = await deploy("uMare", {
         from: deployer,
         log: true,
