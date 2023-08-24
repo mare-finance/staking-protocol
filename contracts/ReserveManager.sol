@@ -1,15 +1,17 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
 import "./interfaces/LendingInterfaces.sol";
 import "./libraries/SafeToken.sol";
 
 import "./RewardManager.sol";
 
-contract ReserveManager is OwnableUpgradeable {
+contract ReserveManager is AccessControlUpgradeable {
     using SafeToken for address;
+
+    bytes32 public constant DISTRIBUTOR_ROLE = keccak256("DISTRIBUTOR_ROLE");
 
     address public immutable usdt = 0x919C1c267BC06a7039e03fcc2eF738525769109c;
     // OpenOcean Router
@@ -20,7 +22,9 @@ contract ReserveManager is OwnableUpgradeable {
         0x8CbD01ec0C424B7E9B174225626a59c8DEC09494;
 
     function initialize() public initializer {
-        __Ownable_init();
+        __AccessControl_init();
+
+        _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
     function distributeReserves(
@@ -29,7 +33,7 @@ contract ReserveManager is OwnableUpgradeable {
         IMarket[] calldata markets,
         uint256[] calldata amounts,
         bytes[] calldata swapQuoteData
-    ) external onlyOwner {
+    ) external onlyRole(DISTRIBUTOR_ROLE) {
         require(
             markets.length == amounts.length &&
                 markets.length == swapQuoteData.length,
