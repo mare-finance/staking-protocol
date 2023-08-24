@@ -71,12 +71,6 @@ describe.only("ReserveManager", () => {
         );
         const otherMarketInfo = marketInfo.filter(m => m != usdtMarketInfo);
 
-        console.log(usdtMarketInfo?.market.address);
-        console.log(usdtMarketInfo?.amount);
-        console.log(otherMarketInfo.map(om => om.market.address));
-        console.log(otherMarketInfo.map(om => om.amount));
-        console.log(otherMarketInfo.map(om => om.data.data));
-
         await expect(
             reserveManager.distributeReserves(
                 usdtMarketInfo?.market.address,
@@ -85,7 +79,7 @@ describe.only("ReserveManager", () => {
                 otherMarketInfo.map(om => om.amount),
                 otherMarketInfo.map(om => om.data.data)
             )
-        ).revertedWith("asd");
+        ).not.reverted;
     });
 });
 
