@@ -8,8 +8,6 @@ import "./libraries/SafeToken.sol";
 
 import "./RewardManager.sol";
 
-import "hardhat/console.sol";
-
 contract ReserveManager is OwnableUpgradeable {
     using SafeToken for address;
 
@@ -74,11 +72,6 @@ contract ReserveManager is OwnableUpgradeable {
         (bool success, bytes memory result) = OORouter.call{value: 0}(
             swapQuoteDatum
         );
-        if (success == false) {
-            assembly {
-                revert(add(result, 32), mload(result))
-            }
-        }
         require(success, "ReserveManager: OO_API_SWAP_FAILED");
     }
 }
