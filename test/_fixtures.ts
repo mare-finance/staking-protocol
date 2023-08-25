@@ -5,12 +5,18 @@ import { getImpersonatedSigner } from "./_utils";
 type ManagerFixtureOutput = [Contract, Contract];
 const managerFixture = deployments.createFixture<any, ManagerFixtureOutput>(
     async ({ deployments, companionNetworks }, options) => {
+        const [deployer] = await ethers.getSigners();
+
         await deployments.fixture(undefined, {
             keepExistingDeployments: true,
         });
 
         const rewardManager = await ethers.getContract("RewardManager");
         const reserveManager = await ethers.getContract("ReserveManager");
+
+        // add distributor role to deployer
+        const distributorRole = await reserveManager.DISTRIBUTOR_ROLE();
+        await reserveManager.grantRole(distributorRole, deployer.address);
 
         // set reserveManager as markets reserve guardian
         const comptrollerAddress = "0xFcD7D41D5cfF03C7f6D573c9732B0506C72f5C72";
