@@ -29,6 +29,7 @@ const config: HardhatUserConfig = {
             chainId: 2222,
             forking: {
                 url: process.env.RPC_KAVA!,
+                blockNumber: 6200800,
             },
         },
         kava: {
